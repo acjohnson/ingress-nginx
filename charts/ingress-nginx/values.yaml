@@ -405,6 +405,9 @@ controller:
     ## Annotations are mandatory for the load balancer to come up. Varies with the cloud service.
     internal:
       enabled: false
+      ## Ensures that only the internal load balancer is created
+      ## this requires controller.publishService.pathOverride to be set to "<namespace>/ingress-nginx-controller-internal"
+      internalOnly: false
       annotations: {}
 
       # loadBalancerIP: ""

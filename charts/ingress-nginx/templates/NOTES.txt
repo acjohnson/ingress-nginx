@@ -17,9 +17,12 @@ Get the application URL by running these commands:
 
   echo "Visit http://$NODE_IP:$HTTP_NODE_PORT to access your application via HTTP."
   echo "Visit https://$NODE_IP:$HTTPS_NODE_PORT to access your application via HTTPS."
-{{- else if contains "LoadBalancer" .Values.controller.service.type }}
+{{- else if (and (contains "LoadBalancer" .Values.controller.service.type) (not .Values.controller.service.internal.internalOnly)) }}
 It may take a few minutes for the LoadBalancer IP to be available.
 You can watch the status by running 'kubectl --namespace {{ .Release.Namespace }} get services -o wide -w {{ include "ingress-nginx.controller.fullname" . }}'
+{{- else if and (contains "LoadBalancer" .Values.controller.service.type) .Values.controller.service.internal.internalOnly }}
+It may take a few minutes for the LoadBalancer IP to be available.
+You can watch the status by running 'kubectl --namespace {{ .Release.Namespace }} get services -o wide -w {{ include "ingress-nginx.controller.fullname" . }}-internal'
 {{- else if contains "ClusterIP"  .Values.controller.service.type }}
 Get the application URL by running these commands:
   export POD_NAME=$(kubectl --namespace {{ .Release.Namespace }} get pods -o jsonpath="{.items[0].metadata.name}" -l "app={{ template "ingress-nginx.name" . }},component={{ .Values.controller.name }},release={{ .Release.Name }}")
